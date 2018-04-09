@@ -5,21 +5,33 @@
 //  Created by aizexin on 2018/3/14.
 //  Copyright © 2018年 aizexin. All rights reserved.
 //
+//给定一个字符串，找出不含有重复字符的 最长子串 的长度。
+//
+//示例：
+//
+//给定 "abcabcbb" ，没有重复字符的最长子串是 "abc" ，那么长度就是3。
+//
+//给定 "bbbbb" ，最长的子串就是 "b" ，长度是1。
+//
+//给定 "pwwkew" ，最长子串是 "wke" ，长度是3。请注意答案必须是一个子串，"pwke" 是 子序列 而不是子串。
 
 import Foundation
-
-print("Hello, World!")
 
 func lengthOfLongestSubstring(_ s: String) -> Int {
     guard let array = s.cString(using: .utf8) else {
         return 0
     }
-    print(array.count - 1)
-    var len : NSInteger = array.count - 1
+    if s.count == 1 {
+        return 1
+    }
+    var len : Int = array.count - 1
     while len > 0 {
         for location in 0...(array.count - 1 - len) {
-            let subStr = (s as NSString).substring(with: NSRange.init(location: location, length: len))
-            if !checkHasrepeat(str: subStr) {
+            
+            let indexStart = s.index(s.startIndex, offsetBy: location)
+            let indexEnd = s.index(s.startIndex, offsetBy: location + len)
+            let subStr = s[indexStart..<indexEnd]
+            if !checkHasrepeat(str: String(subStr)) {
                 return len
             }
         }
@@ -44,7 +56,7 @@ func checkHasrepeat(str: String) -> Bool {
     return flag
 }
 
-let str = "abcabcbb"
+let str = "pwwkew"
 
 print(lengthOfLongestSubstring(str))
 
