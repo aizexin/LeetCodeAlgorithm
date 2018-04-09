@@ -17,47 +17,35 @@
 
 import Foundation
 
-func lengthOfLongestSubstring(_ s: String) -> Int {
-    guard let array = s.cString(using: .utf8) else {
-        return 0
-    }
-    if s.count == 1 {
-        return 1
-    }
-    var len : Int = array.count - 1
-    while len > 0 {
-        for location in 0...(array.count - 1 - len) {
-            
-            let indexStart = s.index(s.startIndex, offsetBy: location)
-            let indexEnd = s.index(s.startIndex, offsetBy: location + len)
-            let subStr = s[indexStart..<indexEnd]
-            if !checkHasrepeat(str: String(subStr)) {
-                return len
+func lengthOfLongestSubstring(_ str: String) -> Int {
+    var set = Set<Character>()
+    var maxLen = 0
+    var index = 0
+    while index < str.count {
+        let indexStart = str.index(str.startIndex, offsetBy: index)
+        let subSting = str[indexStart...]
+        for c in subSting {
+            if set.contains(c) {
+                if maxLen < set.count {
+                    maxLen = set.count
+                }
+                set.removeAll()
             }
+            set.insert(c)
         }
-        len = len - 1
+        if maxLen < set.count {
+            maxLen = set.count
+        }
+        set.removeAll()
+        index = index + 1
     }
-    return len
+    
+    return maxLen
 }
 
-func checkHasrepeat(str: String) -> Bool {
-    var flag = false
-    guard let array = str.cString(using: .utf8) else {
-        return flag
-    }
-    for i in 0..<(array.count - 1) {
-        for j in i + 1..<(array.count - 1)  {
-            if array[i] == array[j] {
-                flag = true
-                return flag
-            }
-        }
-    }
-    return flag
-}
 
-let str = "pwwkew"
+let tempString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"#$%&'()*+,-./:"
 
-print(lengthOfLongestSubstring(str))
+print(lengthOfLongestSubstring(tempString))
 
 
