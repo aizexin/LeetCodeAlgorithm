@@ -19,32 +19,36 @@ import Foundation
 
 func lengthOfLongestSubstring(_ str: String) -> Int {
     var set = Set<Character>()
+    var arry = [Character]()
     var maxLen = 0
-    var index = 0
-    while index < str.count {
-        let indexStart = str.index(str.startIndex, offsetBy: index)
-        let subSting = str[indexStart...]
-        for c in subSting {
-            if set.contains(c) {
-                if maxLen < set.count {
-                    maxLen = set.count
-                }
-                set.removeAll()
+
+    for c in str {
+        if set.contains(c) {
+            if maxLen < arry.count {
+                maxLen = arry.count
             }
-            set.insert(c)
+            while true {
+                if arry.first == c {
+                    set.remove(arry.first!)
+                    arry.removeFirst()
+                    break
+                }
+                set.remove(arry.first!)
+                arry.removeFirst()
+                
+            }
         }
-        if maxLen < set.count {
-            maxLen = set.count
-        }
-        set.removeAll()
-        index = index + 1
+        set.insert(c)
+        arry.append(c)
     }
-    
+    if maxLen < arry.count {
+        maxLen = arry.count
+    }
     return maxLen
 }
 
 
-let tempString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"#$%&'()*+,-./:"
+let tempString = "abcabcbb"
 
 print(lengthOfLongestSubstring(tempString))
 
