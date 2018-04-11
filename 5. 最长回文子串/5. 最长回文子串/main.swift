@@ -20,40 +20,47 @@
 //输出: "bb"
 import Foundation
 
+print(Date())
 func longestPalindrome(_ s: String) -> String {
     
-    var len = s.count
+    var len = 0
+    var star : String.Index = String.Index.init(encodedOffset: 0)
+    var end  : String.Index = String.Index.init(encodedOffset: 0)
     
-    while len > 0 {
-        var location = 0
-        while location <= (s.count - len) {
-            let indexStart = s.index(s.startIndex, offsetBy: location)
-            let indexEnd = s.index(s.startIndex, offsetBy: location + len)
-            
-            let subSting = String(s[indexStart..<indexEnd])
-            if isPalindrome(s: subSting) {
-                return subSting
-            }
-            location = location + 1
+    var pd = [[Bool]]()
+    for _ in 0..<s.count {
+        var array = [Bool]()
+        for _ in 0..<s.count {
+            array.append(false)
         }
-        len = len - 1
+        pd.append(array)
     }
-    return s
-}
-func isPalindrome(s: String) -> Bool {
-   
+    
     for i in 0..<s.count {
-        let index = s.index(s.startIndex, offsetBy: i)
-        let endIndex = s.index(s.startIndex, offsetBy: s.count - i - 1)
-        
-        if s[index] != s[endIndex] && i != s.count/2 {
-            return false
+        for j in 0..<s.count {
+            let index    = s.index(s.startIndex, offsetBy: j)
+            let endIndex = s.index(s.startIndex, offsetBy: i)
+            
+            if i-j<2 {
+                pd[j][i] = (s[index] == s[endIndex])
+            } else {
+                pd[j][i] = (s[index] == s[endIndex] && pd[j+1][i-1])
+            }
+            if pd[j][i] && len<(i-j+1) {
+                len = i-j+1
+                star = index
+                end  = endIndex
+            }
         }
     }
-    return true
+    
+    return String(s[star...end])
 }
+
 
 let testString = "civilwartestingwhetherthatnaptionoranynartionsoconceivedandsodedicatedcanlongendureWeareqmetonagreatbattlefiemldoftzhatwarWehavecometodedicpateaportionofthatfieldasafinalrestingplaceforthosewhoheregavetheirlivesthatthatnationmightliveItisaltogetherfangandproperthatweshoulddothisButinalargersensewecannotdedicatewecannotconsecratewecannothallowthisgroundThebravelmenlivinganddeadwhostruggledherehaveconsecrateditfaraboveourpoorponwertoaddordetractTgheworldadswfilllittlenotlenorlongrememberwhatwesayherebutitcanneverforgetwhattheydidhereItisforusthelivingrathertobededicatedheretotheulnfinishedworkwhichtheywhofoughtherehavethusfarsonoblyadvancedItisratherforustobeherededicatedtothegreattdafskremainingbeforeusthatfromthesehonoreddeadwetakeincreaseddevotiontothatcauseforwhichtheygavethelastpfullmeasureofdevotionthatweherehighlyresolvethatthesedeadshallnothavediedinvainthatthisnationunsderGodshallhaveanewbirthoffreedomandthatgovernmentofthepeoplebythepeopleforthepeopleshallnotperishfromtheearth"
 print(longestPalindrome(testString))
+
+print(Date())
 
 
