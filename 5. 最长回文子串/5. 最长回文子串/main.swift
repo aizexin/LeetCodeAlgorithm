@@ -20,47 +20,81 @@
 //输出: "bb"
 import Foundation
 
-print(Date())
+let startTime = CFAbsoluteTimeGetCurrent()
+
 func longestPalindrome(_ s: String) -> String {
+    var str = s
+    var rArray   = [Int]()
     
-    var len = 0
-    var star : String.Index = String.Index.init(encodedOffset: 0)
-    var end  : String.Index = String.Index.init(encodedOffset: 0)
-    
-    var pd = [[Bool]]()
-    for _ in 0..<s.count {
-        var array = [Bool]()
-        for _ in 0..<s.count {
-            array.append(false)
+    if s.count <= 1 {
+        return s
+    }
+    var set = Set<Character>()
+    for c in s {
+        set.insert(c)
+        if set.count > 1 {
+            break
         }
-        pd.append(array)
+    }
+    if set.count <= 1 {
+        return s
+    }
+    //manacher
+    for i in 0...s.count {
+        let index = str.index(str.startIndex, offsetBy:2*i)
+        str.insert("#", at: index)
+        rArray.append(1)
+        rArray.append(1)
     }
     
-    for i in 0..<s.count {
-        for j in 0..<s.count {
-            let index    = s.index(s.startIndex, offsetBy: j)
-            let endIndex = s.index(s.startIndex, offsetBy: i)
-            
-            if i-j<2 {
-                pd[j][i] = (s[index] == s[endIndex])
+    var maxRight = 0
+    var pos      = 0
+    
+    var maxRadius = 0
+    var maxPos   = 0
+
+    for i in 0..<str.count {
+        if i<maxRight {
+            rArray[i] = min(maxRight-i+1, rArray[2*pos-i])
+        } else {
+            rArray[i] = 1
+        }
+        //判断pos = i开始左右判断是否相等
+        while true {
+            if i-rArray[i]<0 || i+rArray[i]>=str.count {
+                break
+            }
+            let star = str[str.index(str.startIndex, offsetBy: i-rArray[i])]
+            let end  =  str[str.index(str.startIndex, offsetBy: i+rArray[i])]
+            if star == end {
+                rArray[i] = rArray[i] + 1
             } else {
-                pd[j][i] = (s[index] == s[endIndex] && pd[j+1][i-1])
+                break
             }
-            if pd[j][i] && len<(i-j+1) {
-                len = i-j+1
-                star = index
-                end  = endIndex
+        }
+        if rArray[i]+i > maxRight {
+            pos = i
+            maxRight = rArray[i]+i-1
+        }
+      
+        if maxRadius <= rArray[i] {
+            maxRadius = rArray[i]
+            maxPos    = i
+            if maxRadius > (str.count / 2) {
+                break
             }
         }
     }
     
-    return String(s[star...end])
+    let starIndex = str.index(str.startIndex, offsetBy: maxPos - maxRadius+1)
+    let endIndex  = str.index(str.startIndex, offsetBy: maxPos + maxRadius-1)
+    let palinStr  = String(str[starIndex...endIndex]).filter { (c) -> Bool in
+        return c != "#"
+    }
+    return palinStr
 }
 
-
-let testString = "civilwartestingwhetherthatnaptionoranynartionsoconceivedandsodedicatedcanlongendureWeareqmetonagreatbattlefiemldoftzhatwarWehavecometodedicpateaportionofthatfieldasafinalrestingplaceforthosewhoheregavetheirlivesthatthatnationmightliveItisaltogetherfangandproperthatweshoulddothisButinalargersensewecannotdedicatewecannotconsecratewecannothallowthisgroundThebravelmenlivinganddeadwhostruggledherehaveconsecrateditfaraboveourpoorponwertoaddordetractTgheworldadswfilllittlenotlenorlongrememberwhatwesayherebutitcanneverforgetwhattheydidhereItisforusthelivingrathertobededicatedheretotheulnfinishedworkwhichtheywhofoughtherehavethusfarsonoblyadvancedItisratherforustobeherededicatedtothegreattdafskremainingbeforeusthatfromthesehonoreddeadwetakeincreaseddevotiontothatcauseforwhichtheygavethelastpfullmeasureofdevotionthatweherehighlyresolvethatthesedeadshallnothavediedinvainthatthisnationunsderGodshallhaveanewbirthoffreedomandthatgovernmentofthepeoplebythepeopleforthepeopleshallnotperishfromtheearth"
+let testString = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 print(longestPalindrome(testString))
-
-print(Date())
-
-
+let endTime = CFAbsoluteTimeGetCurrent()
+print("执行时间:\((endTime-startTime)*1000)")
